@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECE Curriculum OS — Eng. Mohammad Tailakh</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#2563EB;--primary-d:#1D4ED8;--secondary:#7C3AED;
+  --success:#059669;--success-l:#ECFDF5;
+  --warning:#D97706;--warning-l:#FFFBEB;
+  --danger:#DC2626;--danger-l:#FEF2F2;
+  --lk-bg:#F1F5F9;--lk-bd:#CBD5E1;--lk-tx:#94A3B8;
+  --av-bg:#EFF6FF;--av-bd:#BFDBFE;--av-tx:#1D4ED8;
+  --ip-bg:#FFFBEB;--ip-bd:#FDE68A;--ip-tx:#92400E;
+  --co-bg:#ECFDF5;--co-bd:#A7F3D0;--co-tx:#065F46;
+  --sidebar:250px;--hdr:64px;
+  --bg:#F1F5F9;--surface:#FFF;--surface2:#F8FAFC;
+  --border:#E2E8F0;--text:#0F172A;--muted:#64748B;--light:#94A3B8;
+  --r:12px;--rs:8px;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.06);
+  --shm:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
+  --shl:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+}
+.dark{
+  --bg:#0F172A;--surface:#1E293B;--surface2:#162032;--border:#334155;
+  --text:#F1F5F9;--muted:#94A3B8;--light:#64748B;
+  --lk-bg:#1E293B;--lk-bd:#334155;--lk-tx:#64748B;
+  --av-bg:#1E3A5F;--av-bd:#2563EB;--av-tx:#93C5FD;
+  --ip-bg:#3B2D00;--ip-bd:#D97706;--ip-tx:#FCD34D;
+  --co-bg:#064E3B;--co-bd:#059669;--co-tx:#6EE7B7;
+  --sh:0 1px 3px rgba(0,0,0,.3);--shm:0 4px 6px -1px rgba(0,0,0,.4);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;transition:background .3s,color .3s;font-size:14px;line-height:1.5}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto;transition:transform .3s,background .3s,border-color .3s}
+.sb-brand{padding:18px 16px;border-bottom:1px solid var(--border)}
+.sb-brand-name{font-size:12px;font-weight:800;color:var(--primary);letter-spacing:.5px}
+.sb-brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.sb-nav{flex:1;padding:10px 8px}
+.nav-sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--light);padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--rs);cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px;user-select:none}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--primary);color:#fff}
+.nav-item .ico{font-size:15px;width:18px;text-align:center}
+.sb-footer{padding:12px;border-top:1px solid var(--border)}
+.bot-link{display:flex;align-items:center;gap:8px;padding:10px 12px;background:linear-gradient(135deg,rgba(0,136,204,.15),rgba(0,136,204,.08));border:1px solid rgba(0,136,204,.3);border-radius:var(--rs);text-decoration:none;color:#0088CC;font-size:12px;font-weight:600;transition:all .2s}
+.bot-link:hover{background:linear-gradient(135deg,rgba(0,136,204,.25),rgba(0,136,204,.15))}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.header{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;transition:background .3s}
+.hdr-title{font-size:16px;font-weight:700}
+.hdr-actions{display:flex;align-items:center;gap:8px}
+.content{flex:1;padding:24px}
+.section{display:none}.section.active{display:block}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-d)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg);color:var(--text)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{background:var(--danger-l);color:var(--danger);border:1px solid #FECDD3}.btn-danger:hover{background:#FECACA}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px}
+.stat-value{font-size:26px;font-weight:800;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-bar{height:4px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
+
+/* COURSES */
+.filter-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.filter-btn:hover{border-color:var(--primary);color:var(--primary)}
+.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.search-input{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text);font-size:13px;width:200px}
+.search-input:focus{outline:none;border-color:var(--primary)}
+.cat-header{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.cat-title{font-size:14px;font-weight:700}
+.cat-badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.course-card{border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;border:1px solid;position:relative}
+.course-card:hover{transform:translateY(-2px);box-shadow:var(--shm)}
+.course-card.locked{background:var(--lk-bg);border-color:var(--lk-bd)}
+.course-card.available{background:var(--av-bg);border-color:var(--av-bd)}
+.course-card.inprogress{background:var(--ip-bg);border-color:var(--ip-bd)}
+.course-card.completed{background:var(--co-bg);border-color:var(--co-bd)}
+.cc-name{font-size:13px;font-weight:600;line-height:1.3;margin-bottom:3px}
+.locked .cc-name{color:var(--lk-tx)}.available .cc-name{color:var(--av-tx)}
+.inprogress .cc-name{color:var(--ip-tx)}.completed .cc-name{color:var(--co-tx)}
+.cc-desc{font-size:11px;opacity:.75;line-height:1.35;margin-bottom:8px}
+.locked .cc-desc{color:var(--lk-tx)}.available .cc-desc{color:var(--av-tx)}
+.inprogress .cc-desc{color:var(--ip-tx)}.completed .cc-desc{color:var(--co-tx)}
+.cc-meta{display:flex;align-items:center;justify-content:space-between}
+.cc-ch{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px}
+.locked .cc-ch{background:var(--lk-bd);color:var(--lk-tx)}.available .cc-ch{background:var(--av-bd);color:var(--av-tx)}
+.inprogress .cc-ch{background:var(--ip-bd);color:var(--ip-tx)}.completed .cc-ch{background:var(--co-bd);color:var(--co-tx)}
+.sdot{width:8px;height:8px;border-radius:50%}
+.locked .sdot{background:var(--lk-tx)}.available .sdot{background:#2563EB}
+.inprogress .sdot{background:#D97706;animation:pulse 2s infinite}.completed .sdot{background:#059669}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--shl);animation:slideUp .2s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.modal-title{font-size:17px;font-weight:700}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);padding:4px;border-radius:6px}
+.modal-close:hover{background:var(--bg)}
+.modal-body{padding:22px}
+.msec{margin-bottom:18px}
+.msec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:9px}
+.status-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.status-btn{padding:8px 4px;border-radius:var(--rs);border:2px solid transparent;font-size:10px;font-weight:700;cursor:pointer;text-align:center;transition:all .15s}
+.sb-locked{background:var(--lk-bg);color:var(--lk-tx);border-color:var(--lk-bd)}
+.sb-available{background:var(--av-bg);color:var(--av-tx);border-color:var(--av-bd)}
+.sb-inprogress{background:var(--ip-bg);color:var(--ip-tx);border-color:var(--ip-bd)}
+.sb-completed{background:var(--co-bg);color:var(--co-tx);border-color:var(--co-bd)}
+.status-btn.sel{box-shadow:0 0 0 3px rgba(37,99,235,.35);transform:scale(1.04)}
+.notes-area,.syllabus-edit{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg);color:var(--text);font-family:inherit;font-size:13px;resize:vertical;transition:border-color .2s}
+.notes-area{min-height:70px}
+.syllabus-edit{min-height:100px}
+.notes-area:focus,.syllabus-edit:focus{outline:none;border-color:var(--primary)}
+.syllabus-view{font-size:12px;color:var(--muted);background:var(--bg);border-radius:var(--rs);padding:11px;border:1px solid var(--border);line-height:1.6;white-space:pre-wrap;max-height:180px;overflow-y:auto}
+.prereq-list{display:flex;flex-wrap:wrap;gap:6px}
+.ptag{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid;font-weight:500}
+.ptag.done{background:var(--co-bg);border-color:var(--co-bd);color:var(--co-tx)}
+.ptag.pend{background:var(--lk-bg);border-color:var(--lk-bd);color:var(--lk-tx)}
+
+/* GPA */
+.gpa-hero{background:linear-gradient(135deg,#2563EB,#7C3AED);border-radius:var(--r);padding:28px;text-align:center;color:#fff;margin-bottom:22px}
+.gpa-val{font-size:52px;font-weight:800;letter-spacing:-2px}
+.gpa-lbl{font-size:12px;opacity:.8;margin-top:3px}
+.gpa-sub{font-size:11px;opacity:.65;margin-top:4px}
+.gpa-table{width:100%;border-collapse:collapse;font-size:13px}
+.gpa-table th{text-align:left;padding:9px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--surface2)}
+.gpa-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.grade-sel{padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px;cursor:pointer}
+
+/* PLANNER */
+.planner-ctrl{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.sem-container{display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;min-height:300px}
+.sem-col{min-width:195px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-shrink:0;display:flex;flex-direction:column}
+.sem-hdr{padding:11px 13px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sem-name{font-size:12px;font-weight:700}
+.sem-ch-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
+.sem-ch-badge.ok{background:var(--success-l);color:var(--success)}
+.sem-ch-badge.over{background:var(--danger-l);color:var(--danger)}
+.sem-courses{padding:8px;flex:1}
+.plan-item{display:flex;align-items:center;padding:6px 9px;background:var(--bg);border-radius:var(--rs);margin-bottom:5px;font-size:12px;border:1px solid var(--border)}
+.plan-item span{flex:1;font-weight:500;margin-right:4px}
+.rm-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px;border-radius:4px}
+.rm-btn:hover{color:var(--danger)}
+.sem-footer{padding:9px;border-top:1px solid var(--border)}
+.add-sel{width:100%;padding:6px 9px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:12px;cursor:pointer}
+.type-badge{font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700;margin-left:4px}
+.type-badge.regular{background:#EFF6FF;color:#1D4ED8}.type-badge.summer{background:#FFFBEB;color:#B45309}
+.del-sem-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 4px;border-radius:4px}
+.del-sem-btn:hover{color:var(--danger)}
+
+/* SIMULATOR */
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.sim-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px}
+.sim-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.sim-sub{font-size:12px;color:var(--muted);margin-bottom:15px;line-height:1.5}
+.fg{margin-bottom:14px}
+.flabel{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.finput,.fsel{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit}
+.finput:focus,.fsel:focus{outline:none;border-color:var(--primary)}
+.result-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:14px;text-align:center;margin-top:14px}
+.result-val{font-size:30px;font-weight:800;color:var(--primary)}
+.result-lbl{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+/* MILESTONES */
+.milestone-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.ms-icon{font-size:26px}
+.ms-title{font-size:13px;font-weight:700}
+.ms-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* TAGS */
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+.tag-math{background:#F0FDF4;color:#15803D;border:1px solid #BBF7D0}
+.tag-sci{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA}
+.tag-hw{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.tag-sw{background:#F5F3FF;color:#6D28D9;border:1px solid #DDD6FE}
+.tag-net{background:#ECFEFF;color:#0E7490;border:1px solid #A5F3FC}
+.tag-elec{background:#FFF1F2;color:#BE123C;border:1px solid #FECDD3}
+.tag-lab{background:#FAFAF9;color:#57534E;border:1px solid #D6D3D1}
+.tag-proj{background:#FFFBEB;color:#B45309;border:1px solid #FDE68A}
+
+/* UTILS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.alert{padding:9px 13px;border-radius:var(--rs);font-size:12px;margin-bottom:10px;border:1px solid}
+.alert-warn{background:var(--warning-l);border-color:#FDE68A;color:#92400E}
+.alert-info{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
+.empty-state{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+.empty-ico{font-size:32px;margin-bottom:8px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.info-item{background:var(--bg);border-radius:var(--rs);padding:10px 12px}
+.ii-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:.5px}
+.ii-val{font-size:12px;font-weight:700;margin-top:2px}
+.divider{height:1px;background:var(--border);margin:18px 0}
+.quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.mb-menu{display:none;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text)}
+
+/* SCALE GRID */
+.scale-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:14px}
+
+/* PRINT */
+@media print{.sidebar,.header{display:none!important}.main{margin-left:0!important}.modal-overlay{display:none!important}.content{padding:12px}}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.sim-grid{grid-template-columns:1fr}
+  .status-btns{grid-template-columns:repeat(2,1fr)}.stats-grid{grid-template-columns:repeat(2,1fr)}
+  .mb-menu{display:flex!important}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-brand-name">⚡ ECE CURRICULUM OS</div>
+    <div class="sb-brand-sub" style="font-weight:700;margin-top:3px;">Eng. Mohammad H. Tailakh</div>
+    <div class="sb-brand-sub">Dept. of Computer Engineering</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">Navigation</div>
+    <div class="nav-item active" onclick="nav('dashboard')"><span class="ico">🏠</span>Dashboard</div>
+    <div class="nav-item" onclick="nav('courses')"><span class="ico">📚</span>Course Catalog</div>
+    <div class="nav-item" onclick="nav('planner')"><span class="ico">📅</span>Semester Planner</div>
+    <div class="nav-item" onclick="nav('gpa')"><span class="ico">🎯</span>GPA Calculator</div>
+    <div class="nav-item" onclick="nav('simulator')"><span class="ico">🔬</span>Grade Simulator</div>
+  </nav>
+  <div class="sb-footer">
+    <a href="https://t.me/TailakhBot" target="_blank" class="bot-link">
+      <span style="font-size:20px">🤖</span>
+      <div><div style="font-size:12px;font-weight:800">TailakhBot</div><div style="font-size:10px;opacity:.7">Telegram Learning Assistant</div></div>
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="mb-menu" onclick="toggleSidebar()">☰</button>
+      <span class="hdr-title" id="hdrTitle">Dashboard</span>
+    </div>
+    <div class="hdr-actions">
+      <button class="btn btn-ghost btn-sm" onclick="exportPDF()">📄 Export PDF</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleDark()" id="darkBtn">🌙 Dark</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <section id="sec-dashboard" class="section active">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="quick-actions">
+        <button class="btn btn-primary" onclick="showAvailable()">⚡ What Can I Take Next?</button>
+        <button class="btn btn-ghost" onclick="exportJSON()">💾 Export Plan</button>
+        <button class="btn btn-ghost" onclick="importJSON()">📂 Import Plan</button>
+        <button class="btn btn-danger btn-sm" onclick="resetAll()">🔄 Reset All</button>
+      </div>
+      <div id="msSection"></div>
+      <div class="card" id="catProgress"></div>
+    </section>
+
+    <!-- COURSES -->
+    <section id="sec-courses" class="section">
+      <div class="filter-bar">
+        <input type="text" class="search-input" placeholder="🔍 Search courses..." id="searchInput" oninput="renderCourses()">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('available',this)">⚡ Available</button>
+        <button class="filter-btn" onclick="setFilter('inprogress',this)">🔥 In Progress</button>
+        <button class="filter-btn" onclick="setFilter('completed',this)">✅ Completed</button>
+        <button class="filter-btn" onclick="setFilter('locked',this)">🔒 Locked</button>
+      </div>
+      <div id="coursesContent"></div>
+    </section>
+
+    <!-- PLANNER -->
+    <section id="sec-planner" class="section">
+      <div class="planner-ctrl">
+        <button class="btn btn-primary btn-sm" onclick="addSemester('regular')">+ Regular Semester</button>
+        <button class="btn btn-ghost btn-sm" onclick="addSemester('summer')">☀️ Add Summer</button>
+        <span style="font-size:12px;color:var(--muted)">Regular: max <b>18 CH</b> &nbsp;|&nbsp; Summer: max <b>10 CH</b></span>
+      </div>
+      <div class="sem-container" id="semContainer"></div>
+    </section>
+
+    <!-- GPA -->
+    <section id="sec-gpa" class="section">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px">
+        <!-- Cumulative -->
+        <div class="gpa-hero" style="margin-bottom:0">
+          <div class="gpa-lbl">CUMULATIVE GPA</div>
+          <div class="gpa-val" id="gpaVal">—</div>
+          <div id="gpaClass" style="font-size:15px;font-weight:700;margin-top:4px;opacity:.9"></div>
+          <div class="gpa-sub" id="gpaSub">No grades entered yet</div>
+        </div>
+        <!-- Semester GPA -->
+        <div style="background:linear-gradient(135deg,#0E7490,#0891B2);border-radius:var(--r);padding:22px;color:#fff;overflow-y:auto;max-height:220px">
+          <div class="gpa-lbl">GPA BY SEMESTER</div>
+          <div id="semGpaList" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <!-- GPA Classification reference -->
+      <div class="card" style="margin-bottom:18px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">📋 Cumulative GPA Classification</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">
+          <div class="info-item" style="border-left:3px solid #059669"><div class="ii-lbl">3.65 – 4.00</div><div class="ii-val" style="color:#059669">Excellent</div></div>
+          <div class="info-item" style="border-left:3px solid #2563EB"><div class="ii-lbl">3.00 – 3.64</div><div class="ii-val" style="color:#2563EB">Very Good</div></div>
+          <div class="info-item" style="border-left:3px solid #D97706"><div class="ii-lbl">2.50 – 2.99</div><div class="ii-val" style="color:#D97706">Good</div></div>
+          <div class="info-item" style="border-left:3px solid #EA580C"><div class="ii-lbl">2.00 – 2.49</div><div class="ii-val" style="color:#EA580C">Pass</div></div>
+          <div class="info-item" style="border-left:3px solid #DC2626"><div class="ii-lbl">Below 2.00</div><div class="ii-val" style="color:#DC2626">Weak / Probation</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-size:14px;font-weight:700">Grade Entry — Completed Courses</div>
+          <div style="font-size:11px;color:var(--muted)">Select letter grade — GPA updates live</div>
+        </div>
+        <table class="gpa-table">
+          <thead><tr><th>Course</th><th>Category</th><th style="text-align:center">CH</th><th>Grade</th><th style="text-align:center">Points</th><th>Classification</th></tr></thead>
+          <tbody id="gpaTbody"></tbody>
+        </table>
+        <div id="gpaEmpty" class="empty-state"><div class="empty-ico">📊</div><div>Mark courses as <strong>Completed</strong> in the Course Catalog to enter grades.</div></div>
+      </div>
+    </section>
+
+    <!-- SIMULATOR -->
+    <section id="sec-simulator" class="section">
+      <div class="sim-grid">
+        <div class="sim-card">
+          <div class="sim-title">🎯 Target GPA Calculator</div>
+          <div class="sim-sub">Calculate the GPA you need in remaining courses to hit your target cumulative GPA.</div>
+          <div class="fg"><label class="flabel">Current GPA (0–4.0)</label><input type="number" class="finput" id="s1cGPA" placeholder="e.g. 3.75" step="0.01" min="0" max="4" oninput="calcTarget()"></div>
+          <div class="fg"><label class="flabel">Completed Credit Hours</label><input type="number" class="finput" id="s1cCH" placeholder="e.g. 60" oninput="calcTarget()"></div>
+          <div class="fg"><label class="flabel">Remaining Credit Hours</label><input type="number" class="finput" id="s1rCH" placeholder="e.g. 40" oninput="calcTarget()"></div>
+          <div class="fg"><label class="flabel">Target GPA (0–4.0)</label><input type="number" class="finput" id="s1tGPA" placeholder="e.g. 3.90" step="0.01" min="0" max="4" oninput="calcTarget()"></div>
+          <div class="result-box" id="s1Result"><div style="font-size:12px;color:var(--muted)">Fill in all fields to compute</div></div>
+        </div>
+        <div class="sim-card">
+          <div class="sim-title">📝 Final Exam Score Needed</div>
+          <div class="sim-sub">Find the minimum final exam score required to achieve a target letter grade in a course.</div>
+          <div class="fg"><label class="flabel">Midterm Score (%)</label><input type="number" class="finput" id="s2mid" placeholder="e.g. 78" oninput="calcFinal()"></div>
+          <div class="fg"><label class="flabel">Midterm Weight (%)</label><input type="number" class="finput" id="s2mw" placeholder="e.g. 40" oninput="calcFinal()"></div>
+          <div class="fg"><label class="flabel">Final Exam Weight (%)</label><input type="number" class="finput" id="s2fw" placeholder="e.g. 60" oninput="calcFinal()"></div>
+          <div class="fg"><label class="flabel">Target Grade</label>
+            <select class="fsel" id="s2grade" onchange="calcFinal()">
+              <option value="">— Select Target Grade —</option>
+              <option value="90">A (≥ 90%)</option>
+              <option value="85">B+ (≥ 85%)</option>
+              <option value="80">B (≥ 80%)</option>
+              <option value="75">C+ (≥ 75%)</option>
+              <option value="70">C (≥ 70%)</option>
+              <option value="65">D+ (≥ 65%)</option>
+              <option value="60">D (≥ 60%)</option>
+            </select>
+          </div>
+          <div class="result-box" id="s2Result"><div style="font-size:12px;color:var(--muted)">Fill in all fields to compute</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">📋 Grading Scale — 4.0 System</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">University of Jordan Standard</div>
+        <div class="scale-grid" id="scaleGrid"></div>
+      </div>
+    </section>
+
+  </div><!-- end content -->
+</main><!-- end main -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="overlayClose(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="mTitle"></div>
+        <div style="margin-top:5px;display:flex;gap:6px;align-items:center" id="mMeta"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="msec">
+        <div class="msec-title">Status</div>
+        <div class="status-btns" id="mStatusBtns"></div>
+        <!-- Inline grade entry — appears only when Completed -->
+        <div id="mGradeRow" style="display:none;margin-top:12px;padding:12px;background:var(--co-bg);border:1px solid var(--co-bd);border-radius:var(--rs);display:none">
+          <div style="font-size:11px;font-weight:700;color:var(--co-tx);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">✅ Grade for this course</div>
+          <select class="grade-sel" id="mInlineGrade" style="width:100%;padding:8px 10px;font-size:13px" onchange="setInlineGrade(this.value)">
+            <option value="">— Select Grade —</option>
+          </select>
+        </div>
+      </div>
+      <div class="msec" id="mPrereqSec">
+        <div class="msec-title">Prerequisites</div>
+        <div class="prereq-list" id="mPrereqs"></div>
+      </div>
+      <div class="msec">
+        <div class="msec-title">Description</div>
+        <div id="mElecBanner" class="alert alert-info" style="display:none;margin-bottom:10px"></div>
+        <div id="mDesc" style="font-size:13px;color:var(--muted);line-height:1.6"></div>
+      </div>
+      <div class="msec">
+        <div class="msec-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Syllabus</span>
+          <button class="btn btn-ghost btn-sm" onclick="toggleSyllabusEdit()" id="syllEditBtn">✏️ Edit</button>
+        </div>
+        <div id="mSyllView" class="syllabus-view"></div>
+        <div id="mSyllEdit" style="display:none">
+          <textarea class="syllabus-edit" id="mSyllText" placeholder="Paste syllabus here: week-by-week topics, textbook chapters, grading breakdown..."></textarea>
+          <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveSyllabus()">💾 Save Syllabus</button>
+        </div>
+      </div>
+      <div class="msec">
+        <div class="msec-title">Notes</div>
+        <textarea class="notes-area" id="mNotes" placeholder="Professor name, textbook, exam dates, key formulas..."></textarea>
+        <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveNotesAndClose()">💾 Save & Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<script>
+// ============================================================
+// COURSE DATA
+// ============================================================
+const CAT = {
+  math:{label:'Mathematics',icon:'∑',color:'#15803D'},
+  sci:{label:'Basic Sciences',icon:'⚗️',color:'#C2410C'},
+  hw:{label:'Hardware & Circuits',icon:'🔌',color:'#1D4ED8'},
+  sw:{label:'Software & Data',icon:'💻',color:'#6D28D9'},
+  net:{label:'Networks & Security',icon:'🌐',color:'#0E7490'},
+  elec:{label:'Electives',icon:'⭐',color:'#BE123C'},
+  lab:{label:'Laboratories',icon:'🧪',color:'#57534E'},
+  proj:{label:'Projects & Milestones',icon:'🏆',color:'#B45309'},
+};
+
+const MAX_ELECTIVES = 5;
+const TOTAL_REQUIRED_CH = 134; // 119 core + 5 electives × 3 CH
+
+function countSelectedElectives(){
+  // "Selected" = student deliberately committed: inprogress or completed
+  return Object.entries(S.status)
+    .filter(([id,s])=>C[id]?.cat==='elec'&&(s==='inprogress'||s==='completed'))
+    .length;
+}
+
+const GRADES=[
+  {label:'A',  pts:4.00, desc:'Excellent'},
+  {label:'A-', pts:3.75, desc:'Excellent'},
+  {label:'B+', pts:3.50, desc:'Very Good'},
+  {label:'B',  pts:3.00, desc:'Very Good'},
+  {label:'B-', pts:2.75, desc:'Good'},
+  {label:'C+', pts:2.50, desc:'Good'},
+  {label:'C',  pts:2.00, desc:'Pass'},
+  {label:'C-', pts:1.75, desc:'Weak'},
+  {label:'D+', pts:1.50, desc:'Weak'},
+  {label:'D',  pts:1.00, desc:'Minimum Pass'},
+  {label:'D-', pts:0.75, desc:'Fail (Must Retake)'},
+  {label:'F',  pts:0.00, desc:'Fail'},
+];
+
+function gpaClass(g){
+  if(g===null) return '—';
+  if(g>=3.65) return 'Excellent';
+  if(g>=3.00) return 'Very Good';
+  if(g>=2.50) return 'Good';
+  if(g>=2.00) return 'Pass';
+  return 'Weak — Academic Probation';
+}
+function gpaColor(g){
+  if(g===null) return 'rgba(255,255,255,.6)';
+  if(g>=3.65) return '#6EE7B7';
+  if(g>=3.00) return '#93C5FD';
+  if(g>=2.50) return '#FDE68A';
+  if(g>=2.00) return '#FCA5A5';
+  return '#F87171';
+}
+function calcSemGPA(courses){
+  let pts=0,ch=0;
+  courses.forEach(id=>{
+    if(C[id]&&C[id].ch>0&&S.grades[id]!==undefined){pts+=S.grades[id]*C[id].ch;ch+=C[id].ch;}
+  });
+  return ch>0?pts/ch:null;
+}
+
+const C = {
+  // ── MATHEMATICS ──────────────────────────────────────────
+  calc1:     {id:'calc1',    name:'Calculus 1',            ch:3, cat:'math', pr:[],                    desc:'Limits, derivatives, and integrals. The mathematical engine of engineering.',syllabus:''},
+  calc2:     {id:'calc2',    name:'Calculus 2',            ch:3, cat:'math', pr:['calc1'],             desc:'Advanced integration techniques, sequences, and infinite series.',syllabus:''},
+  calc3:     {id:'calc3',    name:'Calculus 3',            ch:3, cat:'math', pr:['calc2'],             desc:'Multivariable calculus, partial derivatives, and 3D vector fields.',syllabus:''},
+  linalg:    {id:'linalg',   name:'Linear Algebra',        ch:3, cat:'math', pr:['calc1'],             desc:'Matrix transformations, eigenvalues, and vector spaces used in AI and graphics.',syllabus:''},
+  prob:      {id:'prob',     name:'Prob & Random Process', ch:3, cat:'math', pr:['calc2'],             desc:'Stochastic models, probability distributions, and noise analysis in signals.',syllabus:''},
+  discmath:  {id:'discmath', name:'Discrete Mathematics',  ch:3, cat:'math', pr:[],                    desc:'Boolean logic, set theory, and graph theory. The foundation of computer science.',syllabus:''},
+  stats:     {id:'stats',    name:'Statistics',            ch:3, cat:'math', pr:[],                    desc:'Data distributions, variance, and statistical inference for engineering data.',syllabus:''},
+  numana:    {id:'numana',   name:'Prac Numerical Analysis',ch:1,cat:'math', pr:['linalg'],            desc:'Computational algorithms for solving complex mathematical problems via approximations.',syllabus:''},
+  // ── BASIC SCIENCES ───────────────────────────────────────
+  phys1:     {id:'phys1',    name:'Physics 1',             ch:3, cat:'sci',  pr:[],                    desc:'Classical mechanics, kinematics, Newton\'s laws, and energy conservation.',syllabus:''},
+  phys2:     {id:'phys2',    name:'Physics 2',             ch:3, cat:'sci',  pr:['phys1'],             desc:'Electromagnetism, Maxwell\'s equations, and electric fields.',syllabus:''},
+  chem1:     {id:'chem1',    name:'Chemistry 1',           ch:3, cat:'sci',  pr:[],                    desc:'Atomic structure, stoichiometry, and chemical thermodynamics.',syllabus:''},
+  engdraw:   {id:'engdraw',  name:'Eng Drawing & Geom',    ch:3, cat:'sci',  pr:[],                    desc:'Spatial visualization, orthographic projections, and CAD fundamentals.',syllabus:''},
+  // ── HARDWARE & CIRCUITS ──────────────────────────────────
+  diglog:    {id:'diglog',   name:'Digital Logic',         ch:3, cat:'hw',   pr:[],                    desc:'Boolean algebra, K-maps, and the design of combinational/sequential circuits.',syllabus:''},
+  cao1:      {id:'cao1',     name:'Comp Arch & Org 1',     ch:3, cat:'hw',   pr:['diglog','compskills'],desc:'MIPS Datapath, Assembly language, and CPU pipelining.',syllabus:''},
+  cao2:      {id:'cao2',     name:'Comp Arch & Org 2',     ch:3, cat:'hw',   pr:['cao1'],              desc:'Multicore scaling, cache coherence (MOESI), and advanced memory hierarchies.',syllabus:''},
+  circuits:  {id:'circuits', name:'Electric Circuits',     ch:3, cat:'hw',   pr:['phys2'],             desc:'KVL, KCL, Thevenin/Norton theorems, and AC/DC steady-state analysis.',syllabus:''},
+  elec1:     {id:'elec1',    name:'Electronics 1',         ch:3, cat:'hw',   pr:['circuits'],          desc:'Semiconductor physics, Diodes, BJTs, and MOSFET operational amplifiers.',syllabus:''},
+  signals:   {id:'signals',  name:'Signals & Systems',     ch:3, cat:'hw',   pr:['circuits'],          desc:'Continuous/discrete time signals, Fourier transforms, and LTI system dynamics.',syllabus:''},
+  embedded:  {id:'embedded', name:'Embedded Systems',      ch:3, cat:'hw',   pr:['elec1','diglog'],    desc:'Microcontroller architecture, hardware interfacing, and real-time C programming.',syllabus:''},
+  vlsi:      {id:'vlsi',     name:'Digital Elec & VLSI',   ch:3, cat:'hw',   pr:['elec1'],             desc:'CMOS logic design, transistor-level layout, and silicon fabrication principles.',syllabus:''},
+  machines:  {id:'machines', name:'Electrical Machines',   ch:3, cat:'hw',   pr:['circuits'],          desc:'Transformers, DC/AC motors, and electromechanical energy conversion.',syllabus:''},
+  control:   {id:'control',  name:'Control Systems',       ch:3, cat:'hw',   pr:['embedlab','signals'],desc:'Feedback loops, PID controllers, root locus, and system stability analysis.',syllabus:''},
+  // ── SOFTWARE & DATA ──────────────────────────────────────
+  compskills:{id:'compskills',name:'Comp Skills for Eng',  ch:3, cat:'sw',   pr:[],                    desc:'Introduction to programming logic, syntax, and basic algorithmic thinking.',syllabus:''},
+  oop:       {id:'oop',      name:'OOP Problem Solving',   ch:3, cat:'sw',   pr:['compskills'],        desc:'Object-oriented architecture, classes, inheritance, and polymorphism.',syllabus:''},
+  dsa:       {id:'dsa',      name:'Data Struct & Algo',    ch:3, cat:'sw',   pr:['oop'],               desc:'Time complexity, trees, graphs, and memory optimization algorithms.',syllabus:''},
+  os:        {id:'os',       name:'Operating Systems',     ch:3, cat:'sw',   pr:['dsa'],               desc:'Kernels, multithreading, deadlocks, and memory paging systems.',syllabus:''},
+  database:  {id:'database', name:'Intro to Database Sys', ch:3, cat:'sw',   pr:['dsa'],               desc:'Relational algebra, SQL, indexing, and database architecture.',syllabus:''},
+  parallel:  {id:'parallel', name:'Parallel Processing',   ch:3, cat:'sw',   pr:['dsa','cao2'],        desc:'GPU programming, concurrency, and distributed computing models.',syllabus:''},
+  aiml:      {id:'aiml',     name:'AI & Machine Learning', ch:3, cat:'sw',   pr:['applab','linalg'],   desc:'Neural networks, predictive modeling, and deep learning architectures.',syllabus:''},
+  // ── NETWORKS & SECURITY ──────────────────────────────────
+  compnet:   {id:'compnet',  name:'Computer Networks',     ch:3, cat:'net',  pr:['diglog','signals'],  desc:'OSI Model, TCP/IP protocols, routing algorithms, and network topology.',syllabus:''},
+  infosec:   {id:'infosec',  name:'Info & Network Sec',    ch:3, cat:'net',  pr:['compnet'],           desc:'Cryptography, network defense, firewalls, and vulnerability analysis.',syllabus:''},
+  prognet:   {id:'prognet',  name:'Prog Network Protocols',ch:3, cat:'net',  pr:['compnet','oop'],     desc:'Socket programming and implementation of network communication protocols.',syllabus:''},
+  datacomm:  {id:'datacomm', name:'Data Comm Systems',     ch:3, cat:'net',  pr:['compnet'],           desc:'Signal encoding, modulation, and physical transmission media.',syllabus:''},
+  // ── ELECTIVES ────────────────────────────────────────────
+  softeng:    {id:'softeng',    name:'Software Engineering',  ch:3,cat:'elec',pr:['oop'],              desc:'Agile methodologies, SDLC, and large-scale software system design.',syllabus:''},
+  compilers:  {id:'compilers',  name:'Optimizing Compilers',  ch:3,cat:'elec',pr:['cao2','oop'],       desc:'Lexical analysis, syntax parsing, and machine code generation.',syllabus:''},
+  iot:        {id:'iot',        name:'Internet of Things',    ch:3,cat:'elec',pr:['embedded','compnet'],desc:'Edge computing, sensor networks, and IoT communication protocols.',syllabus:''},
+  vision:     {id:'vision',     name:'Computer Vision',       ch:3,cat:'elec',pr:['aiml'],             desc:'Image processing, feature extraction, and visual machine learning.',syllabus:''},
+  cloud:      {id:'cloud',      name:'Cloud Computing',       ch:3,cat:'elec',pr:['compnet'],          desc:'Distributed systems, virtualization, and scalable cloud architectures.',syllabus:''},
+  mobile:     {id:'mobile',     name:'Mobile Computing',      ch:3,cat:'elec',pr:['dsa'],              desc:'App development, mobile OS architecture, and resource-constrained computing.',syllabus:''},
+  compprog:   {id:'compprog',   name:'Competitive Prog',      ch:3,cat:'elec',pr:['dsa'],              desc:'Advanced algorithmic problem solving under strict time constraints.',syllabus:''},
+  specialtop: {id:'specialtop', name:'Special Topics in CpE', ch:3,cat:'elec',pr:['cao2'],             desc:'Cutting-edge research topics in computer engineering.',syllabus:''},
+  advdig:     {id:'advdig',     name:'Adv Digital Design',    ch:3,cat:'elec',pr:['cao1'],             desc:'Advanced FPGA design, hardware description languages, and timing analysis.',syllabus:''},
+  forensics:  {id:'forensics',  name:'Digital Forensics',     ch:3,cat:'elec',pr:['infosec'],          desc:'Cybercrime investigation, data recovery, and system auditing.',syllabus:''},
+  wireless:   {id:'wireless',   name:'Wireless Networks',     ch:3,cat:'elec',pr:['compnet'],          desc:'Cellular architectures, Wi-Fi protocols, and RF transmission.',syllabus:''},
+  robotics:   {id:'robotics',   name:'Mobile Robotics',       ch:3,cat:'elec',pr:['control'],          desc:'Kinematics, path planning, and autonomous robotic navigation.',syllabus:''},
+  compintel:  {id:'compintel',  name:'Computational Intel',   ch:3,cat:'elec',pr:['aiml'],             desc:'Fuzzy logic, genetic algorithms, and swarm intelligence.',syllabus:''},
+  datasci:    {id:'datasci',    name:'Data Science',          ch:3,cat:'elec',pr:['aiml'],             desc:'Big data analytics, data mining, and statistical visualization.',syllabus:''},
+  advml:      {id:'advml',      name:'Adv Topics in ML',      ch:3,cat:'elec',pr:['aiml'],             desc:'Deep reinforcement learning, transformers, and advanced AI models.',syllabus:''},
+  imgana:     {id:'imgana',     name:'Digital Image Analysis',ch:3,cat:'elec',pr:['applab','signals'],  desc:'2D signal processing, image enhancement, and filtering.',syllabus:''},
+  // ── LABORATORIES ─────────────────────────────────────────
+  workshop:   {id:'workshop',   name:'Engineering Workshop',  ch:1,cat:'lab', pr:[],                   desc:'Hands-on mechanical and electrical fabrication skills.',syllabus:''},
+  applab:     {id:'applab',     name:'Comp Applications Lab', ch:1,cat:'lab', pr:['compskills'],       desc:'Practical software application design and deployment.',syllabus:''},
+  digloglab:  {id:'digloglab',  name:'Digital Logic Lab',     ch:1,cat:'lab', pr:['diglog'],           desc:'Hardware implementation of logic gates and FPGA programming.',syllabus:''},
+  orglab:     {id:'orglab',     name:'Comp Org Lab',          ch:1,cat:'lab', pr:['cao1','digloglab'], desc:'Building and testing CPU datapaths and memory hierarchies.',syllabus:''},
+  parallellab:{id:'parallellab',name:'Parallel Processing Lab',ch:1,cat:'lab',pr:['parallel'],         desc:'CUDA programming and multicore optimization exercises.',syllabus:''},
+  circlab:    {id:'circlab',    name:'Electric Circuit Lab',  ch:1,cat:'lab', pr:['circuits'],         desc:'Oscilloscopes, breadboards, and physical circuit analysis.',syllabus:''},
+  netlab:     {id:'netlab',     name:'Computer Networks Lab', ch:1,cat:'lab', pr:['compnet'],          desc:'Packet tracing, router configuration, and network simulation.',syllabus:''},
+  advnetlab:  {id:'advnetlab',  name:'Adv Networks Lab',      ch:1,cat:'lab', pr:['netlab'],           desc:'Advanced routing protocols and network security implementations.',syllabus:''},
+  embedlab:   {id:'embedlab',   name:'Embedded Systems Lab',  ch:1,cat:'lab', pr:['embedded'],         desc:'Microcontroller programming, sensor integration, and hardware debugging.',syllabus:''},
+  vlsilab:    {id:'vlsilab',    name:'Digital Elec & VLSI Lab',ch:1,cat:'lab',pr:['vlsi'],             desc:'CAD tools for CMOS layout and transistor-level simulation.',syllabus:''},
+  phys1lab:   {id:'phys1lab',   name:'Physics 1 Lab',         ch:1,cat:'lab', pr:['phys1'],            desc:'Experimental verification of classical mechanics.',syllabus:''},
+  phys2lab:   {id:'phys2lab',   name:'Physics 2 Lab',         ch:1,cat:'lab', pr:['phys2'],            desc:'Experimental verification of electromagnetism.',syllabus:''},
+  // ── PROJECTS & MILESTONES ────────────────────────────────
+  ms90:       {id:'ms90',       name:'Completion of 90 CH',   ch:0,cat:'proj',pr:['90CH'],             desc:'Official marker for completing the junior year of engineering.',syllabus:''},
+  ms120:      {id:'ms120',      name:'Completion of 120 CH',  ch:0,cat:'proj',pr:['120CH'],            desc:'Official marker for entering the senior design phase.',syllabus:''},
+  engeco:     {id:'engeco',     name:'Engineering Economy',   ch:2,cat:'proj',pr:['ms90'],             desc:'Financial analysis, cost estimation, and project management.',syllabus:''},
+  fieldtrain: {id:'fieldtrain', name:'Field Training',        ch:5,cat:'proj',pr:['ms120'],            desc:'Industry internship and professional engineering readiness.',syllabus:''},
+  proj1:      {id:'proj1',      name:'Project 1',             ch:1,cat:'proj',pr:['ms120'],            desc:'Senior design project proposal, architecture, and initial prototype.',syllabus:''},
+  proj2:      {id:'proj2',      name:'Project 2',             ch:2,cat:'proj',pr:['proj1'],            desc:'Final implementation, testing, and defense of the senior project.',syllabus:''},
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let S = {
+  status:{},   // id -> 'locked'|'available'|'inprogress'|'completed'
+  grades:{},   // id -> grade points number
+  notes:{},    // id -> string
+  syllabi:{},  // id -> string
+  semesters:[], // [{id,name,type,courses:[]}]
+  dark:false,
+};
+let currentId = null;
+let activeFilter = 'all';
+let syllEditMode = false;
+
+function load(){
+  try{
+    const d=localStorage.getItem('ece_v2');
+    if(d) S={...S,...JSON.parse(d)};
+  }catch(e){}
+  if(S.dark){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️ Light';}
+}
+function save(){
+  try{localStorage.setItem('ece_v2',JSON.stringify(S));}catch(e){}
+}
+
+// ============================================================
+// STATUS ENGINE
+// ============================================================
+function completedCH(){
+  return Object.entries(S.status)
+    .filter(([id,s])=>s==='completed'&&C[id])
+    .reduce((sum,[id])=>sum+C[id].ch,0);
+}
+
+function computeAll(){
+  const ch=completedCH();
+  Object.keys(C).forEach(id=>{
+    if(S.status[id]==='completed'||S.status[id]==='inprogress') return;
+    const met=C[id].pr.every(r=>{
+      if(r==='90CH') return ch>=90;
+      if(r==='120CH') return ch>=120;
+      return S.status[r]==='completed';
+    });
+    S.status[id]=met?'available':'locked';
+  });
+  // ensure no-prereq courses are available by default
+  Object.keys(C).forEach(id=>{
+    if(!S.status[id]) S.status[id]=C[id].pr.length===0?'available':'locked';
+  });
+}
+
+function setStatus(id,ns){
+  // Elective limit: only inprogress/completed count as "selected"
+  if(C[id]?.cat==='elec' && (ns==='inprogress'||ns==='completed')){
+    const current=countSelectedElectives();
+    const alreadySelected=S.status[id]==='inprogress'||S.status[id]==='completed';
+    if(!alreadySelected && current>=MAX_ELECTIVES){
+      alert(`⚠️ Elective Limit Reached\n\nYou may only select ${MAX_ELECTIVES} electives.\nYou have already selected ${current}/5.\n\nDe-select another elective first.`);
+      // Re-render modal to reset button state
+      openCourse(id); return;
+    }
+  }
+  S.status[id]=ns;
+  const ch=completedCH();
+  // cascade unlock
+  Object.keys(C).forEach(dep=>{
+    if(S.status[dep]==='completed'||S.status[dep]==='inprogress') return;
+    const met=C[dep].pr.every(r=>{
+      if(r==='90CH') return completedCH()>=90;
+      if(r==='120CH') return completedCH()>=120;
+      return S.status[r]==='completed';
+    });
+    S.status[dep]=met?'available':'locked';
+  });
+  save();
+  renderAll();
+}
+
+function renderAll(){
+  renderDashboard();
+  renderCourses();
+  renderGPA();
+  renderPlanner();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDashboard(){
+  const ch=completedCH();
+  const done=Object.values(S.status).filter(s=>s==='completed').length;
+  const avail=Object.values(S.status).filter(s=>s==='available').length;
+  const ip=Object.values(S.status).filter(s=>s==='inprogress').length;
+  const gpa=calcGPA();
+  const total=Object.keys(C).length;
+
+  const selElec=countSelectedElectives();
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card">
+      <div class="stat-label">Completed CH</div>
+      <div class="stat-value">${ch}</div>
+      <div class="stat-sub">of ${TOTAL_REQUIRED_CH} CH required</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:${Math.min(100,(ch/TOTAL_REQUIRED_CH*100)).toFixed(1)}%;background:#059669"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Courses Done</div>
+      <div class="stat-value">${done}</div>
+      <div class="stat-sub">of ${total} in catalog</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:${(done/total*100).toFixed(1)}%;background:#059669"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cumulative GPA</div>
+      <div class="stat-value" style="color:${gpa>=3.65?'#059669':gpa>=3.00?'#2563EB':gpa>=2.50?'#D97706':gpa>=2.00?'#EA580C':'#DC2626'}">${gpa?gpa.toFixed(3):'—'}</div>
+      <div class="stat-sub">out of 4.000</div>
+    </div>
+    <div class="stat-card" style="${selElec>=MAX_ELECTIVES?'border-color:var(--co-bd);background:var(--co-bg)':''}">
+      <div class="stat-label">Electives Chosen</div>
+      <div class="stat-value" style="color:${selElec>=MAX_ELECTIVES?'#059669':'#D97706'}">${selElec}/${MAX_ELECTIVES}</div>
+      <div class="stat-sub">${selElec>=MAX_ELECTIVES?'✅ Selection complete':'Choose from 16 options'}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" style="width:${(selElec/MAX_ELECTIVES*100).toFixed(0)}%;background:${selElec>=MAX_ELECTIVES?'#059669':'#D97706'}"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">In Progress</div>
+      <div class="stat-value" style="color:#D97706">${ip}</div>
+      <div class="stat-sub">this semester</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">CH to Graduation</div>
+      <div class="stat-value" style="color:#7C3AED">${Math.max(0,TOTAL_REQUIRED_CH-ch)}</div>
+      <div class="stat-sub">of ${TOTAL_REQUIRED_CH} CH required</div>
+    </div>
+  `;
+
+  // Milestones
+  const ms90done=S.status['ms90']==='completed';
+  const ms120done=S.status['ms120']==='completed';
+  const grad=S.status['proj2']==='completed';
+  document.getElementById('msSection').innerHTML=`
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px">🏁 Degree Milestones</div>
+    ${[
+      {ico:'📚',title:'90 Credit Hours',sub:'Junior Year Complete',done:ms90done,ch:90,id:'ms90'},
+      {ico:'🎓',title:'120 Credit Hours',sub:'Senior Phase Unlocked',done:ms120done,ch:120,id:'ms120'},
+      {ico:'🏆',title:'Graduation',sub:`${TOTAL_REQUIRED_CH} CH + 5 Electives + Project 2`,done:grad,ch:null,id:'grad'},
+    ].map(m=>`
+      <div class="milestone-card" style="${m.done?'border-color:var(--co-bd);background:var(--co-bg)':''}">
+        <div class="ms-icon">${m.ico}</div>
+        <div style="flex:1">
+          <div class="ms-title" style="${m.done?'color:var(--co-tx)':''}">${m.title}</div>
+          <div class="ms-sub">${m.sub}</div>
+          ${m.ch?`<div style="margin-top:5px;display:flex;align-items:center;gap:8px">
+            <div class="stat-bar" style="width:180px;display:inline-block">
+              <div class="stat-bar-fill" style="width:${Math.min(100,ch/m.ch*100).toFixed(1)}%;background:${m.done?'#059669':'#2563EB'}"></div>
+            </div>
+            <span style="font-size:11px;color:var(--muted)">${Math.min(ch,m.ch)}/${m.ch} CH</span>
+          </div>`:''}
+          ${m.id==='grad'?`<div style="margin-top:5px;font-size:11px;color:var(--muted)">Electives: ${selElec}/${MAX_ELECTIVES} selected</div>`:''}
+        </div>
+        <div style="font-size:22px">${m.done?'✅':'⏳'}</div>
+      </div>
+    `).join('')}
+  `;
+
+  // Category progress
+  document.getElementById('catProgress').innerHTML=`
+    <div style="font-size:14px;font-weight:700;margin-bottom:14px">📊 Progress by Category</div>
+    ${Object.keys(CAT).map(cat=>{
+      const courses=Object.values(C).filter(c=>c.cat===cat);
+      const d=courses.filter(c=>S.status[c.id]==='completed').length;
+      const t=courses.length;
+      const p=t?+(d/t*100).toFixed(0):0;
+      return `<div style="margin-bottom:11px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <div style="font-size:12px;font-weight:600">${CAT[cat].icon} ${CAT[cat].label}</div>
+          <div style="font-size:12px;color:var(--muted)">${d}/${t} &nbsp;<strong style="color:var(--text)">${p}%</strong></div>
+        </div>
+        <div class="stat-bar" style="height:6px"><div class="stat-bar-fill" style="width:${p}%;background:${CAT[cat].color}"></div></div>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+// ============================================================
+// COURSES
+// ============================================================
+function renderCourses(){
+  const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
+  let html='';
+  Object.keys(CAT).forEach(cat=>{
+    const courses=Object.values(C)
+      .filter(c=>c.cat===cat)
+      .filter(c=>activeFilter==='all'||S.status[c.id]===activeFilter)
+      .filter(c=>!q||c.name.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q));
+    if(!courses.length) return;
+    const selE=cat==='elec'?countSelectedElectives():null;
+    const electiveBanner=cat==='elec'?`
+      <div class="alert ${selE>=MAX_ELECTIVES?'alert-success':'alert-info'}" style="margin-bottom:10px">
+        ${selE>=MAX_ELECTIVES
+          ?`✅ <strong>Elective selection complete</strong> — you have chosen ${selE}/${MAX_ELECTIVES} electives (${selE*3} CH). No further selection allowed.`
+          :`⭐ <strong>Choose ${MAX_ELECTIVES-selE} more elective${MAX_ELECTIVES-selE!==1?'s':''}</strong> — ${selE}/${MAX_ELECTIVES} selected so far. Set any elective to In Progress or Completed to register it.`
+        }
+      </div>`:'';
+    html+=`<div class="cat-header"><div class="cat-title">${CAT[cat].icon} ${CAT[cat].label}</div><div class="cat-badge">${cat==='elec'?`${selE}/${MAX_ELECTIVES} selected · `:''} ${courses.length} course${courses.length!==1?'s':''}</div></div>
+    ${electiveBanner||''}
+    <div class="course-grid">${courses.map(c=>courseCard(c,cat==='elec'&&selE>=MAX_ELECTIVES&&S.status[c.id]!=='inprogress'&&S.status[c.id]!=='completed')).join('')}</div>`;
+  });
+  document.getElementById('coursesContent').innerHTML=html||`<div class="empty-state"><div class="empty-ico">🔍</div><div>No courses match your search or filter.</div></div>`;
+}
+
+function courseCard(c,capped=false){
+  const s=S.status[c.id]||'locked';
+  const dimStyle=capped?'opacity:.45;filter:grayscale(.6)':'';
+  return `<div class="course-card ${s}" onclick="openCourse('${c.id}')" style="${dimStyle}">
+    <div class="cc-name">${c.name}</div>
+    <div class="cc-desc">${c.desc.substring(0,62)}${c.desc.length>62?'…':''}</div>
+    <div class="cc-meta">
+      <span class="cc-ch">${c.ch} CH</span>
+      <div style="display:flex;align-items:center;gap:4px"><div class="sdot"></div>
+        <span style="font-size:10px;font-weight:700;opacity:.7">${capped?'CAPPED':{locked:'LOCKED',available:'OPEN',inprogress:'ACTIVE',completed:'DONE'}[s]}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses();
+}
+
+function showAvailable(){
+  nav('courses');
+  activeFilter='available';
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Available')));
+  renderCourses();
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openCourse(id){
+  currentId=id;
+  syllEditMode=false;
+  const course=C[id];
+  const s=S.status[id]||'locked';
+  document.getElementById('mTitle').textContent=course.name;
+  document.getElementById('mMeta').innerHTML=`
+    <span class="tag tag-${course.cat}">${CAT[course.cat].icon} ${CAT[course.cat].label}</span>
+    <span style="font-size:12px;color:var(--muted)">${course.ch} Credit Hour${course.ch!==1?'s':''}</span>
+  `;
+  const sArr=[
+    {k:'locked',l:'🔒 Locked',c:'sb-locked'},
+    {k:'available',l:'⚡ Available',c:'sb-available'},
+    {k:'inprogress',l:'🔥 In Progress',c:'sb-inprogress'},
+    {k:'completed',l:'✅ Completed',c:'sb-completed'},
+  ];
+  document.getElementById('mStatusBtns').innerHTML=sArr.map(sv=>`
+    <button class="status-btn ${sv.c} ${s===sv.k?'sel':''}" onclick="changeStatus('${id}','${sv.k}',this)">${sv.l}</button>
+  `).join('');
+  if(course.pr.length){
+    document.getElementById('mPrereqSec').style.display='block';
+    const ch=completedCH();
+    document.getElementById('mPrereqs').innerHTML=course.pr.map(r=>{
+      if(r==='90CH') return `<span class="ptag ${ch>=90?'done':'pend'}">90 Credit Hours ${ch>=90?'✓':'○'}</span>`;
+      if(r==='120CH') return `<span class="ptag ${ch>=120?'done':'pend'}">120 Credit Hours ${ch>=120?'✓':'○'}</span>`;
+      const done=S.status[r]==='completed';
+      return `<span class="ptag ${done?'done':'pend'}">${C[r]?C[r].name:r} ${done?'✓':'○'}</span>`;
+    }).join('');
+  } else {
+    document.getElementById('mPrereqSec').style.display='none';
+  }
+  document.getElementById('mDesc').textContent=course.desc;
+  // Elective limit banner in modal
+  const isElec=course.cat==='elec';
+  const selE=countSelectedElectives();
+  const alreadySel=S.status[id]==='inprogress'||S.status[id]==='completed';
+  const elecBannerEl=document.getElementById('mElecBanner');
+  if(isElec){
+    elecBannerEl.style.display='block';
+    elecBannerEl.className=`alert ${alreadySel?'alert-success':selE>=MAX_ELECTIVES?'alert-warn':'alert-info'}`;
+    elecBannerEl.innerHTML=alreadySel
+      ?`✅ This elective is <strong>selected</strong> (${selE}/${MAX_ELECTIVES} used)`
+      :selE>=MAX_ELECTIVES
+        ?`⛔ <strong>Limit reached</strong> — ${selE}/${MAX_ELECTIVES} electives already selected. De-select another to swap.`
+        :`⭐ Electives: ${selE}/${MAX_ELECTIVES} selected. You can still choose ${MAX_ELECTIVES-selE} more.`;
+  } else {
+    elecBannerEl.style.display='none';
+  }
+  // Syllabus
+  const syll=S.syllabi[id]||course.syllabus||'';
+  document.getElementById('mSyllView').textContent=syll||'No syllabus added yet. Click ✏️ Edit to paste one.';
+  document.getElementById('mSyllText').value=syll;
+  document.getElementById('mSyllEdit').style.display='none';
+  document.getElementById('mSyllView').style.display='block';
+  document.getElementById('syllEditBtn').textContent='✏️ Edit';
+  document.getElementById('mNotes').value=S.notes[id]||'';
+  // Show inline grade if already completed
+  updateInlineGrade(id, s);
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function changeStatus(id,ns,btn){
+  document.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  setStatus(id,ns);
+  renderGPA();
+  // Show inline grade selector immediately when completed
+  updateInlineGrade(id,ns);
+}
+
+function updateInlineGrade(id,ns){
+  const row=document.getElementById('mGradeRow');
+  const sel=document.getElementById('mInlineGrade');
+  if(ns==='completed'&&C[id]&&C[id].ch>0){
+    row.style.display='block';
+    const cur=S.grades[id];
+    sel.innerHTML=`<option value="">— Select Grade —</option>`+
+      GRADES.map(g=>`<option value="${g.pts}" ${cur===g.pts?'selected':''}>${g.label} — ${g.desc} (${g.pts.toFixed(2)})</option>`).join('');
+  } else {
+    row.style.display='none';
+  }
+}
+
+function setInlineGrade(v){
+  if(!currentId) return;
+  if(v==='') delete S.grades[currentId];
+  else S.grades[currentId]=parseFloat(v);
+  save(); renderGPA();
+}
+
+function saveNotesAndClose(){
+  if(!currentId) return;
+  S.notes[currentId]=document.getElementById('mNotes').value;
+  save();
+  closeModal();
+}
+
+function toggleSyllabusEdit(){
+  syllEditMode=!syllEditMode;
+  document.getElementById('mSyllEdit').style.display=syllEditMode?'block':'none';
+  document.getElementById('mSyllView').style.display=syllEditMode?'none':'block';
+  document.getElementById('syllEditBtn').textContent=syllEditMode?'👁 View':'✏️ Edit';
+}
+
+function saveSyllabus(){
+  if(!currentId) return;
+  S.syllabi[currentId]=document.getElementById('mSyllText').value;
+  document.getElementById('mSyllView').textContent=S.syllabi[currentId]||'No syllabus added yet.';
+  save();
+  toggleSyllabusEdit();
+  flashBtn('syllEditBtn','✅ Saved','✏️ Edit');
+}
+
+function flashBtn(id,msg,orig,el){
+  const btn=el||(id?document.getElementById(id):null);
+  if(!btn) return;
+  const o=btn.textContent;
+  btn.textContent=msg;
+  setTimeout(()=>btn.textContent=orig||o,1500);
+}
+
+function overlayClose(e){if(e.target===document.getElementById('modalOverlay')) closeModal();}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');currentId=null;}
+
+// ============================================================
+// GPA
+// ============================================================
+function calcGPA(){
+  const ids=Object.entries(S.status).filter(([id,s])=>s==='completed'&&C[id]&&C[id].ch>0).map(([id])=>id);
+  if(!ids.length) return null;
+  let pts=0,ch=0;
+  ids.forEach(id=>{if(S.grades[id]!==undefined){pts+=S.grades[id]*C[id].ch;ch+=C[id].ch;}});
+  return ch>0?pts/ch:null;
+}
+
+function renderGPA(){
+  const ids=Object.entries(S.status).filter(([id,s])=>s==='completed'&&C[id]&&C[id].ch>0).map(([id])=>id);
+  const gpa=calcGPA();
+  document.getElementById('gpaVal').textContent=gpa!==null?gpa.toFixed(3):'—';
+  document.getElementById('gpaClass').textContent=gpa!==null?gpaClass(gpa):'';
+  document.getElementById('gpaClass').style.color=gpaColor(gpa);
+  const graded=ids.filter(id=>S.grades[id]!==undefined);
+  const gradCH=graded.reduce((s,id)=>s+C[id].ch,0);
+  document.getElementById('gpaSub').textContent=
+    !ids.length?'No completed courses yet':
+    !graded.length?`${ids.length} completed — select grades below`:
+    `${graded.length} course${graded.length!==1?'s':''} · ${gradCH} credit hours`;
+
+  // Semester GPA panel
+  const semEl=document.getElementById('semGpaList');
+  if(!S.semesters.length){
+    semEl.innerHTML='<div style="font-size:12px;opacity:.65">Use the Semester Planner to group courses into semesters — per-semester GPA will appear here.</div>';
+  } else {
+    semEl.innerHTML=S.semesters.map(sem=>{
+      const sg=calcSemGPA(sem.courses);
+      const semCH=sem.courses.reduce((s,id)=>s+(C[id]?.ch||0),0);
+      const gradedCount=sem.courses.filter(id=>S.grades[id]!==undefined).length;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.15)">
+        <div>
+          <div style="font-size:12px;font-weight:700">${sem.name}</div>
+          <div style="font-size:10px;opacity:.6">${semCH} CH · ${gradedCount}/${sem.courses.length} graded</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:800;color:${sg!==null?gpaColor(sg):'rgba(255,255,255,.35)'}">${sg!==null?sg.toFixed(3):'—'}</div>
+          <div style="font-size:10px;opacity:.75">${sg!==null?gpaClass(sg):''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Grade entry table
+  document.getElementById('gpaEmpty').style.display=ids.length?'none':'block';
+  document.getElementById('gpaTbody').innerHTML=ids.map(id=>{
+    const pts=S.grades[id];
+    const gradeObj=pts!==undefined?GRADES.find(g=>Math.abs(g.pts-pts)<.01):null;
+    const col=pts!==undefined?(pts>=3.65?'#059669':pts>=3.00?'#2563EB':pts>=2.50?'#D97706':pts>=2.00?'#EA580C':'#DC2626'):'var(--muted)';
+    return `<tr>
+      <td style="font-weight:500">${C[id].name}</td>
+      <td><span class="tag tag-${C[id].cat}">${CAT[C[id].cat].label}</span></td>
+      <td style="text-align:center;font-weight:700">${C[id].ch}</td>
+      <td><select class="grade-sel" onchange="setGrade('${id}',this.value)">
+        <option value="">— Select Grade —</option>
+        ${GRADES.map(g=>`<option value="${g.pts}" ${pts===g.pts?'selected':''}>${g.label} — ${g.desc} (${g.pts.toFixed(2)})</option>`).join('')}
+      </select></td>
+      <td style="text-align:center;font-weight:800;color:${col}">${pts!==undefined?pts.toFixed(2):'—'}</td>
+      <td style="font-size:11px;color:${col};font-weight:600">${gradeObj?gradeObj.desc:'—'}</td>
+    </tr>`;
+  }).join('');
+  renderDashboard();
+}
+
+function setGrade(id,v){
+  if(v==='') delete S.grades[id]; else S.grades[id]=parseFloat(v);
+  save(); renderGPA();
+}
+
+// ============================================================
+// SEMESTER PLANNER
+// ============================================================
+function renderPlanner(){
+  const el=document.getElementById('semContainer');
+  if(!S.semesters.length){
+    el.innerHTML=`<div class="empty-state" style="width:100%"><div class="empty-ico">📅</div><div>No semesters yet.<br>Click <strong>+ Regular Semester</strong> to start planning.</div></div>`;
+    return;
+  }
+  const allPlanned=S.semesters.flatMap(s=>s.courses);
+  el.innerHTML=S.semesters.map((sem,idx)=>{
+    const semCH=sem.courses.reduce((s,id)=>s+(C[id]?.ch||0),0);
+    const max=sem.type==='summer'?10:18;
+    const over=semCH>max;
+    const addable=Object.values(C)
+      .filter(c=>!allPlanned.includes(c.id)||sem.courses.includes(c.id))
+      .filter(c=>['available','inprogress','completed'].includes(S.status[c.id]))
+      .filter(c=>!sem.courses.includes(c.id));
+    return `<div class="sem-col">
+      <div class="sem-hdr">
+        <div>
+          <div class="sem-name">${sem.name}<span class="type-badge ${sem.type}">${sem.type==='summer'?'☀️':'📘'}</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span class="sem-ch-badge ${over?'over':'ok'}">${semCH}/${max}CH</span>
+          <button class="del-sem-btn" onclick="delSemester(${idx})" title="Delete">🗑</button>
+        </div>
+      </div>
+      ${over?`<div class="alert alert-warn" style="margin:7px;font-size:11px">⚠️ Exceeds ${max} CH ${sem.type==='summer'?'summer':'regular'} limit</div>`:''}
+      <div class="sem-courses">
+        ${!sem.courses.length?'<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px">No courses added</div>':
+          sem.courses.map(id=>{
+            const c=C[id];
+            return c?`<div class="plan-item">
+              <span>${c.name}</span>
+              <span style="font-size:10px;color:var(--muted)">${c.ch}CH</span>
+              <button class="rm-btn" onclick="rmFromSem(${idx},'${id}')">✕</button>
+            </div>`:'';
+          }).join('')}
+      </div>
+      <div class="sem-footer">
+        <select class="add-sel" onchange="addToSem(${idx},this)">
+          <option value="">+ Add course…</option>
+          ${addable.map(c=>`<option value="${c.id}">${c.name} (${c.ch}CH)</option>`).join('')}
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addSemester(type){
+  const n=S.semesters.filter(s=>s.type===type).length+1;
+  const name=type==='summer'?`Summer ${n}`:`Semester ${S.semesters.filter(s=>s.type==='regular').length+1}`;
+  S.semesters.push({id:Date.now(),name,type,courses:[]});
+  save(); renderPlanner();
+}
+
+function delSemester(idx){
+  if(confirm(`Delete "${S.semesters[idx].name}"?`)){S.semesters.splice(idx,1);save();renderPlanner();}
+}
+
+function addToSem(idx,sel){
+  const id=sel.value; if(!id) return;
+  const sem=S.semesters[idx];
+  const max=sem.type==='summer'?10:18;
+  const cur=sem.courses.reduce((s,cid)=>s+(C[cid]?.ch||0),0);
+  const add=C[id]?.ch||0;
+  if(cur+add>max){
+    alert(`⚠️ Adding "${C[id]?.name}" (${add} CH) would exceed the ${max} CH ${sem.type==='summer'?'summer':'regular'} semester limit.\nCurrent: ${cur} CH  |  Adding: ${add} CH  |  Limit: ${max} CH`);
+    sel.value=''; return;
+  }
+  // Prereq order warning
+  const bad=C[id].pr.filter(r=>{
+    if(r==='90CH'||r==='120CH') return false;
+    return !S.semesters.slice(0,idx).some(s=>s.courses.includes(r))&&S.status[r]!=='completed';
+  });
+  if(bad.length&&!confirm(`⚠️ Prerequisites not in earlier semesters:\n${bad.map(r=>C[r]?.name||r).join(', ')}\n\nAdd anyway?`)){sel.value='';return;}
+  sem.courses.push(id); save(); renderPlanner();
+}
+
+function rmFromSem(idx,id){
+  S.semesters[idx].courses=S.semesters[idx].courses.filter(c=>c!==id);
+  save(); renderPlanner();
+}
+
+// ============================================================
+// SIMULATORS
+// ============================================================
+function calcTarget(){
+  const cGPA=parseFloat(document.getElementById('s1cGPA').value);
+  const cCH=parseFloat(document.getElementById('s1cCH').value);
+  const rCH=parseFloat(document.getElementById('s1rCH').value);
+  const tGPA=parseFloat(document.getElementById('s1tGPA').value);
+  const el=document.getElementById('s1Result');
+  if([cGPA,cCH,rCH,tGPA].some(isNaN)){el.innerHTML='<div style="font-size:12px;color:var(--muted)">Fill in all fields to compute</div>';return;}
+  const needed=(tGPA*(cCH+rCH)-cGPA*cCH)/rCH;
+  if(needed>4.0) el.innerHTML=`<div class="result-val" style="color:#DC2626">Impossible</div><div class="result-lbl">Target GPA is mathematically unreachable.<br>Maximum achievable ≈ ${((4*rCH+cGPA*cCH)/(cCH+rCH)).toFixed(3)}</div>`;
+  else if(needed<0) el.innerHTML=`<div class="result-val" style="color:#059669">Already Secured</div><div class="result-lbl">Current progress exceeds target regardless of remaining grades.</div>`;
+  else{
+    el.innerHTML=`<div class="result-val">${needed.toFixed(3)}</div><div class="result-lbl">Required GPA in remaining ${rCH} CH<br>Classification: <strong>${gpaClass(needed)}</strong></div>`;
+  }
+}
+
+function calcFinal(){
+  const mid=parseFloat(document.getElementById('s2mid').value);
+  const mw=parseFloat(document.getElementById('s2mw').value);
+  const fw=parseFloat(document.getElementById('s2fw').value);
+  const tpct=parseFloat(document.getElementById('s2grade').value);
+  const el=document.getElementById('s2Result');
+  if([mid,mw,fw,tpct].some(isNaN)||!document.getElementById('s2grade').value){el.innerHTML='<div style="font-size:12px;color:var(--muted)">Fill in all fields to compute</div>';return;}
+  const fn=(tpct-mid*mw/100)/(fw/100);
+  const lbl=document.getElementById('s2grade').options[document.getElementById('s2grade').selectedIndex].text;
+  if(fn>100) el.innerHTML=`<div class="result-val" style="color:#DC2626">${fn.toFixed(1)}%</div><div class="result-lbl">Impossible — ${lbl} is not achievable with current midterm score.</div>`;
+  else if(fn<0) el.innerHTML=`<div class="result-val" style="color:#059669">Already Secured</div><div class="result-lbl">${lbl} is guaranteed regardless of final exam performance.</div>`;
+  else el.innerHTML=`<div class="result-val" style="color:${fn<=60?'#059669':fn<=80?'#2563EB':'#DC2626'}">${fn.toFixed(1)}%</div><div class="result-lbl">Required on final exam to achieve ${lbl}</div>`;
+}
+
+function renderScaleGrid(){
+  document.getElementById('scaleGrid').innerHTML=GRADES.map(g=>`
+    <div class="info-item" style="border-left:3px solid ${g.pts>=3.65?'#059669':g.pts>=3.00?'#2563EB':g.pts>=2.50?'#D97706':g.pts>=2.00?'#EA580C':'#DC2626'}">
+      <div class="ii-lbl" style="font-size:14px;font-weight:800">${g.label} = ${g.pts.toFixed(2)}</div>
+      <div class="ii-val" style="color:var(--muted);font-weight:400">${g.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function nav(sec){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+sec).classList.add('active');
+  const titles={dashboard:'Dashboard',courses:'Course Catalog',planner:'Semester Planner',gpa:'GPA Calculator',simulator:'Grade Simulator'};
+  document.getElementById('hdrTitle').textContent=titles[sec]||sec;
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')?.includes(sec)) n.classList.add('active');});
+  if(sec==='gpa') renderGPA();
+  if(sec==='planner') renderPlanner();
+  if(sec==='dashboard') renderDashboard();
+  // close sidebar on mobile
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function toggleDark(){
+  S.dark=!S.dark;
+  document.body.classList.toggle('dark',S.dark);
+  document.getElementById('darkBtn').textContent=S.dark?'☀️ Light':'🌙 Dark';
+  save();
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+function exportPDF(){window.print();}
+function resetAll(){
+  if(!confirm('Reset ALL progress, grades, notes, and semester plans?\n\nThis cannot be undone.')) return;
+  S.status={};S.grades={};S.notes={};S.syllabi={};S.semesters=[];
+  computeAll(); save(); renderAll();
+}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`ece_plan_${new Date().toISOString().slice(0,10)}.json`;a.click();
+}
+function importJSON(){document.getElementById('importFile').click();}
+function handleImport(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      S={...S,...d};save();renderAll();
+      alert('✅ Plan imported successfully!');
+    }catch{alert('❌ Invalid file format.');}
+  };
+  r.readAsText(f);
+  e.target.value='';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded',()=>{
+  load();
+  computeAll();
+  renderDashboard();
+  renderCourses();
+  renderPlanner();
+  renderGPA();
+  renderScaleGrid();
+  // Auto-populate simulator from GPA data
+  const ch=completedCH();
+  const gpa=calcGPA();
+  if(ch>0){
+    document.getElementById('s1cCH').value=ch;
+    if(gpa) document.getElementById('s1cGPA').value=gpa.toFixed(3);
+    document.getElementById('s1rCH').value=Math.max(0,120-ch);
+  }
+});
+</script>
+</body>
+</html>
